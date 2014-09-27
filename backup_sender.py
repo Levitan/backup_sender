@@ -19,6 +19,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 #
+# Development for: Clever AS (http://clever-as.ru)
 
 import sys, os, ftplib, md5, cgi, zipfile
 def main():
@@ -26,13 +27,14 @@ def main():
   args = cgi.FieldStorage()
   login = args['login'].value
   passwd = args['pass'].value
+  # host = args['host'].value # Раскоментируйте если хотите указывать хост через GET
   # Проверяем пасс
   if hashSum(passwd) != 'MD5_SUMM':
-    print "Pass is incorrect" # Нужна ТОЛЬКО для отладки!!!
     sys.exit()
+  # Имя сайта
   site_name = 'SITE_NAME'
   # Задаём имена файлов
-  back_name = 'full_dump.tar.gz'
+  back_name = 'full_dump.zip'
   db_file = 'dump.sql'
   # параметры подключения к базе
   db_host = 'localhost'
@@ -40,20 +42,19 @@ def main():
   db_pass = 'db_pass'
   db_name = 'db_name'
   # параметры подключения к FTP
-  ftp_host = 'PUT_A_FTP_HOST_HERE'
+  # ftp_host = host # Раскоментировать в случае указания хоста в GET запросе
+  ftp_host = 'PUT_A_FTP_HOST_HERE' # Закоментировать в случае указания хоста в GET запросе
   ftp_user = login
   ftp_pass = passwd
-  # Имя сайта
-  site_name = 'site.ru'
   
+  # Творим тёмные дела
   dumpDB(db_user, db_pass, db_host, db_name, db_file) # Снимаем базу
   packFiles(back_name) # Пакуем всё в один архив
-  sendFiles(ftp_host, ftp_user, ftp_pass, back_name)
+  sendFiles(ftp_host, ftp_user, ftp_pass, back_name, site_name)
   
-  # Удаляем бекап, что бы врагу не досталось
+  # Удаляем бекап, что бы врагу не достался
   os.remove(back_name)
   os.remove(db_file)
-  print "Finish" # Нужна ТОЛЬКО для отладки!!!
   
   
 def hashSum(val):
@@ -68,13 +69,12 @@ def packFiles(fileArc):
   zf = zipfile.ZipFile(fileArc, 'w')
   for d, dirs, files in os.walk(os.getcwd()):
     for f in files:
-      print os.path.join(d,f)
       if f != fileArc:
 	zf.write(os.path.join(d, f))
   zf.close()
   
-def sendFiles(host, user, passwd, fileArc):
-  ftpCon = ftplib.FTP(host, user, passwd, site)
+def sendFiles(host, user, passwd, fileArc, site):
+  ftpCon = ftplib.FTP(host, user, passwd)
   ftpCon.set_pasv(True)
   ftpCon.mkd(site)
   ftpCon.cwd(site)
