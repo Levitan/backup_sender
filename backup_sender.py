@@ -66,7 +66,7 @@ def dumpDB(user, passwd, host, name, dbFile):
   os.system('mysqldump -u'+user+' -p'+passwd+' -h'+host+' '+name+' > '+dbFile)
 
 def packFiles(fileArc):
-  zf = zipfile.ZipFile(fileArc, 'w')
+  zf = zipfile.ZipFile(fileArc, 'w', zipfile.ZIP_DEFLATED,allowZip64=True)
   for d, dirs, files in os.walk(os.getcwd()):
     for f in files:
       if f != fileArc:
