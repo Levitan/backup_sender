@@ -9,6 +9,10 @@ Dependency
 2. Modules for Python: sys, os, ftplib, md5, cgi, zipfile
 3. Avalible execution CGI on hosting
 
+If Python 2.6 or less
+=====================
+If on your hosting installed python 2.6 or less, use backup_sender_py26.py
+
 Usage
 =====
 1. Put file backup_sender.py in root your site
