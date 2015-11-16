@@ -21,7 +21,7 @@
 #
 # Development for: Clever AS (http://clever-as.ru)
 
-import sys, os, ftplib, md5, cgi, zipfile
+import sys, os, ftplib, md5, cgi, zipfile, datetime
 def main():
   # Парсим GET параметры
   args = cgi.FieldStorage()
@@ -32,7 +32,7 @@ def main():
   if hashSum(passwd) != 'MD5_SUMM':
     sys.exit()
   # Имя сайта
-  site_name = 'SITE_NAME'
+  site_name = 'SITE_NAME' + str(datetime.datetime.now())
   # Задаём имена файлов
   back_name = 'full_dump.zip'
   db_file = 'dump.sql'
